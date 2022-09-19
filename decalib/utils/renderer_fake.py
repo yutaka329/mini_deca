@@ -143,6 +143,7 @@ class SRenderY(nn.Module):
                                 face_vertices.detach(),
                                 face_normals],
                                -1)
+        '''
         # rasterize
         rendering = self.rasterizer(transformed_vertices, self.faces.expand(batch_size, -1, -1), attributes, h, w)
 
@@ -200,7 +201,10 @@ class SRenderY(nn.Module):
             'normal_images': normal_images * alpha_images,
             'transformed_normals': transformed_normals,
         }
-
+        '''
+        outputs = {
+            'normals': normals,
+        }
         return outputs
 
     def add_SHlight(self, normal_images, sh_coeff):

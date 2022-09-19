@@ -45,6 +45,7 @@ class DECA(nn.Module):
             self.cfg = cfg
         else:
             self.cfg = config
+
         self.device = device
         self.image_size = self.cfg.dataset.image_size
         self.uv_size = self.cfg.model.uv_size
@@ -89,7 +90,7 @@ class DECA(nn.Module):
         model_path = self.cfg.pretrained_modelpath
         if os.path.exists(model_path):
             print(f'trained model found. load {model_path}')
-            checkpoint = torch.load(model_path)
+            checkpoint = torch.load(model_path, map_location=torch.device('cpu') )
             self.checkpoint = checkpoint
             util.copy_state_dict(self.E_flame.state_dict(), checkpoint['E_flame'])
             util.copy_state_dict(self.E_detail.state_dict(), checkpoint['E_detail'])
@@ -203,17 +204,20 @@ class DECA(nn.Module):
         if rendering:
             # ops = self.render(verts, trans_verts, albedo, codedict['light'])
             ops = self.render(verts, trans_verts, albedo, h=h, w=w, background=background)
+
             ## output
-            opdict['grid'] = ops['grid']
-            opdict['rendered_images'] = ops['images']
-            opdict['alpha_images'] = ops['alpha_images']
-            opdict['normal_images'] = ops['normal_images']
+            # opdict['grid'] = ops['grid']
+            # opdict['rendered_images'] = ops['images']
+            # opdict['alpha_images'] = ops['alpha_images']
+            # opdict['normal_images'] = ops['normal_images']
         
         if self.cfg.model.use_tex:
             opdict['albedo'] = albedo
 
         uv_shading = self.render.add_SHlight(ops['normals'], codedict['light'])
-        uv_texture = albedo * uv_shading
+        print(albedo.shape, uv_shading.shape)
+        #uv_texture = albedo * uv_shading
+        uv_texture = albedo
         opdict['uv_texture_gt'] = uv_texture[:,:3,:,:]
         opdict['normals'] = ops['normals']
 
