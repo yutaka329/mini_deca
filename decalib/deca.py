@@ -24,7 +24,8 @@ from time import time
 from skimage.io import imread
 import cv2
 import pickle
-from .utils.renderer import SRenderY, set_rasterizer
+
+#from .utils.renderer import SRenderY, set_rasterizer
 from .utils.renderer_fake import  SRenderY, set_rasterizer
 
 from .models.encoders import ResnetEncoder

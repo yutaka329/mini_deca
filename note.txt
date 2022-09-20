@@ -1,0 +1,4 @@
+pyinstaller -F main.pcy --hidden-import chumpy
+
+
+D:\software\anaconda3\envs\deca\Lib\site-packages\chumpy

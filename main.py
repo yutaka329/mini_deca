@@ -1,3 +1,14 @@
+# def script_method(fn, _rcb=None):
+#     return fn
+# def script(obj, optimize=True, _frames_up=0, _rcb=None):
+#     return obj
+# import torch.jit
+# script_method1 = torch.jit.script_method
+# script1 = torch.jit.script
+# torch.jit.script_method = script_method
+# torch.jit.script = script
+import os
+#os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 import cv2
 import torch
 from decalib.utils.config import cfg as deca_cfg

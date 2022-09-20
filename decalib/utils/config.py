@@ -8,7 +8,7 @@ import os
 
 cfg = CN()
 
-abs_deca_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+abs_deca_dir = '' #os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 cfg.deca_dir = abs_deca_dir
 cfg.device = 'cuda'
 cfg.device_id = '0'
@@ -29,8 +29,9 @@ cfg.model.flame_lmk_embedding_path = os.path.join(cfg.deca_dir, 'data', 'landmar
 cfg.model.face_mask_path = os.path.join(cfg.deca_dir, 'data', 'uv_face_mask.png') 
 cfg.model.face_eye_mask_path = os.path.join(cfg.deca_dir, 'data', 'uv_face_eye_mask.png') 
 cfg.model.mean_tex_path = os.path.join(cfg.deca_dir, 'data', 'mean_texture.jpg') 
-cfg.model.tex_path = os.path.join(cfg.deca_dir, 'data', 'FLAME_albedo_from_BFM.npz') 
-cfg.model.tex_type = 'BFM' # BFM, FLAME, albedoMM
+cfg.model.tex_path = os.path.join(cfg.deca_dir, 'data', 'FLAME_albedo_from_BFM.npz')
+cfg.model.flame_tex_path = os.path.join(cfg.deca_dir, 'data', 'FLAME_texture.npz')
+cfg.model.tex_type = 'FLAME' # BFM, FLAME, albedoMM
 cfg.model.uv_size = 256
 cfg.model.param_list = ['shape', 'tex', 'exp', 'pose', 'cam', 'light']
 cfg.model.n_shape = 100

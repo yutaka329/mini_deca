@@ -2,22 +2,64 @@ import numpy as np
 from skimage.transform import estimate_transform, warp, resize, rescale
 import cv2
 
+from ibug.face_detection import RetinaFacePredictor
+from ibug.face_alignment import FANPredictor
+class FaceDetectModule:
+    def __init__(self):
+        self.face_detector = RetinaFacePredictor(threshold=0.8, device='cpu', model=RetinaFacePredictor.get_model('mobilenet0.25'))
+
+    def run(self, image_data):
+        detected_faces = self.face_detector(image_data, rgb = True)
+        select = 0
+        if detected_faces.shape[0] == 0:
+            print('detect no face')
+            return None
+        else:
+            maxsize = 0
+            for i in range(detected_faces.shape[0]):
+                x1,y1,x2,y2 = detected_faces[i, :4]
+                size = (x2-x1) * (y2-y1)
+                if size > maxsize:
+                    select = i
+                    maxsize = size
+        box = detected_faces[select, :4]
+        return box
+
+class FaceLandmarkModule:
+    def __init__(self):
+        self.landmark_detector = FANPredictor(device='cpu', model=FANPredictor.get_model('2DFAN2_ALT'))
+    def run(self, image_data, face):
+        landmarks, scores = self.landmark_detector(image_data, face, rgb = True)
+
+        return landmarks.squeeze()
+
 class FAN(object):
     def __init__(self):
-        import face_alignment
-        self.model = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False,
-                                                device = 'cpu')
+        #import face_alignment
+        #self.model = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False, device = 'cpu')
+        self.face_model = FaceDetectModule()
+        self.faceland_model = FaceLandmarkModule()
     def run(self, image):
         '''
         image: 0-255, uint8, rgb, [h, w, 3]
         return: detected box list
         '''
-        out = self.model.get_landmarks(image)
-        if out is None:
+        # out = self.model.get_landmarks(image)
+        # if out is None:
+        #     return [0], 'kpt68'
+        # else:
+        #     kpt = out[0].squeeze()
+        #     left = np.min(kpt[:,0]); right = np.max(kpt[:,0]);
+        #     top = np.min(kpt[:,1]); bottom = np.max(kpt[:,1])
+        #     bbox = [left,top, right, bottom]
+        #     return bbox, 'kpt68'
+
+        faces = self.face_model.run(image)
+        if faces is None:
             return [0], 'kpt68'
         else:
-            kpt = out[0].squeeze()
-            left = np.min(kpt[:,0]); right = np.max(kpt[:,0]);
+            kpt = self.faceland_model.run(image, faces)
+            left = np.min(kpt[:,0]); right = np.max(kpt[:,0])
             top = np.min(kpt[:,1]); bottom = np.max(kpt[:,1])
             bbox = [left,top, right, bottom]
             return bbox, 'kpt68'
