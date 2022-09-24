@@ -1,0 +1,13 @@
+pip install opencv-python==4.5.3.56
+pip install torch==1.8.1+cu101 torchvision==0.9.1+cu101  -f https://download.pytorch.org/whl/torch_stable.html
+
+
+pip install scipy>=1.4.1
+pip install chumpy>=0.69
+pip install scikit-image>=0.15
+
+pip install PyYAML
+pip install yacs==0.1.8
+pip install kornia
+pip install ninja
+pip install fvcore

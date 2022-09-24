@@ -25,8 +25,8 @@ from skimage.io import imread
 import cv2
 import pickle
 
-#from .utils.renderer import SRenderY, set_rasterizer
-from .utils.renderer_fake import  SRenderY, set_rasterizer
+from .utils.renderer import SRenderY, set_rasterizer
+#from .utils.renderer_fake import  SRenderY, set_rasterizer
 
 from .models.encoders import ResnetEncoder
 from .models.FLAME import FLAME, FLAMETex
@@ -172,7 +172,8 @@ class DECA(nn.Module):
         if self.cfg.model.use_tex:
             albedo = self.flametex(codedict['tex'])
         else:
-            albedo = torch.zeros([batch_size, 3, self.uv_size, self.uv_size], device=images.device) 
+            albedo = torch.zeros([batch_size, 3, self.uv_size, self.uv_size], device=images.device)
+        albedo[...] = 178/255
         landmarks3d_world = landmarks3d.clone()
 
         ## projection
@@ -222,32 +223,32 @@ class DECA(nn.Module):
         opdict['uv_texture_gt'] = uv_texture[:,:3,:,:]
         opdict['normals'] = ops['normals']
 
-        return opdict, None
+        #return opdict, None
 
-        '''
-        if use_detail:
-            uv_z = self.D_detail(torch.cat([codedict['pose'][:,3:], codedict['exp'], codedict['detail']], dim=1))
-            if iddict is not None:
-                uv_z = self.D_detail(torch.cat([iddict['pose'][:,3:], iddict['exp'], codedict['detail']], dim=1))
-            uv_detail_normals = self.displacement2normal(uv_z, verts, ops['normals'])
-            uv_shading = self.render.add_SHlight(uv_detail_normals, codedict['light'])
-            uv_texture = albedo*uv_shading
 
-            opdict['uv_texture'] = uv_texture 
-            opdict['normals'] = ops['normals']
-            opdict['uv_detail_normals'] = uv_detail_normals
-            opdict['displacement_map'] = uv_z+self.fixed_uv_dis[None,None,:,:]
-        
-        if vis_lmk:
-            landmarks3d_vis = self.visofp(ops['transformed_normals'])#/self.image_size
-            landmarks3d = torch.cat([landmarks3d, landmarks3d_vis], dim=2)
-            opdict['landmarks3d'] = landmarks3d
+        # if use_detail:
+        #     uv_z = self.D_detail(torch.cat([codedict['pose'][:,3:], codedict['exp'], codedict['detail']], dim=1))
+        #     if iddict is not None:
+        #         uv_z = self.D_detail(torch.cat([iddict['pose'][:,3:], iddict['exp'], codedict['detail']], dim=1))
+        #     uv_detail_normals = self.displacement2normal(uv_z, verts, ops['normals'])
+        #     uv_shading = self.render.add_SHlight(uv_detail_normals, codedict['light'])
+        #     uv_texture = albedo*uv_shading
+        #
+        #     opdict['uv_texture'] = uv_texture
+        #     opdict['normals'] = ops['normals']
+        #     opdict['uv_detail_normals'] = uv_detail_normals
+        #     opdict['displacement_map'] = uv_z+self.fixed_uv_dis[None,None,:,:]
+        #
+        # if vis_lmk:
+        #     landmarks3d_vis = self.visofp(ops['transformed_normals'])#/self.image_size
+        #     landmarks3d = torch.cat([landmarks3d, landmarks3d_vis], dim=2)
+        #     opdict['landmarks3d'] = landmarks3d
 
         if return_vis:
             ## render shape
-            shape_images, _, grid, alpha_images = self.render.render_shape(verts, trans_verts, h=h, w=w, images=background, return_grid=True)
-            detail_normal_images = F.grid_sample(uv_detail_normals, grid, align_corners=False)*alpha_images
-            shape_detail_images = self.render.render_shape(verts, trans_verts, detail_normal_images=detail_normal_images, h=h, w=w, images=background)
+            # shape_images, _, grid, alpha_images = self.render.render_shape(verts, trans_verts, h=h, w=w, images=background, return_grid=True)
+            # detail_normal_images = F.grid_sample(uv_detail_normals, grid, align_corners=False)*alpha_images
+            # shape_detail_images = self.render.render_shape(verts, trans_verts, detail_normal_images=detail_normal_images, h=h, w=w, images=background)
             
             ## extract texture
             ## TODO: current resolution 256x256, support higher resolution, and add visibility
@@ -267,8 +268,8 @@ class DECA(nn.Module):
                 'inputs': images, 
                 'landmarks2d': util.tensor_vis_landmarks(images, landmarks2d),
                 'landmarks3d': util.tensor_vis_landmarks(images, landmarks3d),
-                'shape_images': shape_images,
-                'shape_detail_images': shape_detail_images
+                # 'shape_images': shape_images,
+                # 'shape_detail_images': shape_detail_images
             }
             if self.cfg.model.use_tex:
                 visdict['rendered_images'] = ops['images']
@@ -277,7 +278,7 @@ class DECA(nn.Module):
 
         else:
             return opdict
-        '''
+
 
     def visualize(self, visdict, size=224, dim=2):
         '''

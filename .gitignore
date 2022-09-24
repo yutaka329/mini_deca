@@ -1,3 +1,6 @@
 data/
 /build/
 /dist/
+/Images_tmp/
+**.pyc
+/backup/

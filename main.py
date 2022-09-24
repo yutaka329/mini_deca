@@ -8,25 +8,25 @@
 # torch.jit.script_method = script_method
 # torch.jit.script = script
 import os
-#os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 import cv2
 import torch
 from decalib.utils.config import cfg as deca_cfg
 from decalib.deca import DECA
 from preprocess import PreProcess
-import os
+
 from glob import glob
 
 class deca_agent:
     def __init__(self):
-        self.device = 'cpu'
+        self.device = 'cuda'#'cpu'
         self.preprocess = PreProcess()
         self.build()
 
     def build(self):
         deca_cfg.model.use_tex = True
-        deca_cfg.rasterizer_type = "standard" #cpu 不支持
-        deca_cfg.model.extract_tex = False
+        deca_cfg.rasterizer_type = "pytorch3d" #cpu 不支持
+        deca_cfg.model.extract_tex = True
         self.deca = DECA(config = deca_cfg, device=self.device)
 
     def run(self, image, savefolder,  name, saveObj=True):
