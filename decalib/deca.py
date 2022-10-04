@@ -161,6 +161,15 @@ class DECA(nn.Module):
             codedict['euler_jaw_pose'] = euler_jaw_pose  
         return codedict
 
+    def decode_hand(self, codedict):
+        images = codedict['images']
+        batch_size = images.shape[0]
+
+        ## decode
+        verts, landmarks2d, landmarks3d = self.flame(shape_params=codedict['shape'], expression_params=codedict['exp'],
+                                                     pose_params=codedict['pose'])
+        return verts
+
     # @torch.no_grad()
     def decode(self, codedict, rendering=True, iddict=None, vis_lmk=True, return_vis=True, use_detail=True,
                 render_orig=False, original_image=None, tform=None):

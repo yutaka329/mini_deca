@@ -1,4 +1,7 @@
-pyinstaller -F main.pcy --hidden-import chumpy
+第一个版本: pyinstaller -F main.py --hidden-import chumpy
 
+第二个版本: pyinstaller main_ui.py --hidden-import chumpy
+
+第三个版本: pyinstaller main_ui.spec
 
 D:\software\anaconda3\envs\deca\Lib\site-packages\chumpy
