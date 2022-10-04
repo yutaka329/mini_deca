@@ -4,4 +4,8 @@
 
 第三个版本: pyinstaller main_ui.spec
 
+1) 将cache目录下的文件夹拷贝main_ui目录下
+2) 将PyQt5下的Qt5Core.dll和Qt5Gui.dll 拷贝到main_ui目录下
+3) 将data, Images, demo.ui拷贝到main_ui目录下
+
 D:\software\anaconda3\envs\deca\Lib\site-packages\chumpy

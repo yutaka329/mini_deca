@@ -84,8 +84,8 @@ class DECA(nn.Module):
         self.E_detail = ResnetEncoder(outsize=self.n_detail).to(self.device)
         # decoders
         self.flame = FLAME(model_cfg).to(self.device)
-        if model_cfg.use_tex:
-            self.flametex = FLAMETex(model_cfg).to(self.device)
+        # if model_cfg.use_tex:
+        #     self.flametex = FLAMETex(model_cfg).to(self.device)
         self.D_detail = Generator(latent_dim=self.n_detail+self.n_cond, out_channels=1, out_scale=model_cfg.max_z, sample_mode = 'bilinear').to(self.device)
         # resume model
         model_path = self.cfg.pretrained_modelpath
@@ -178,11 +178,14 @@ class DECA(nn.Module):
         
         ## decode
         verts, landmarks2d, landmarks3d = self.flame(shape_params=codedict['shape'], expression_params=codedict['exp'], pose_params=codedict['pose'])
-        if self.cfg.model.use_tex:
-            albedo = self.flametex(codedict['tex'])
-        else:
-            albedo = torch.zeros([batch_size, 3, self.uv_size, self.uv_size], device=images.device)
+        # if self.cfg.model.use_tex:
+        #     albedo = self.flametex(codedict['tex'])
+        # else:
+        #     albedo = torch.zeros([batch_size, 3, self.uv_size, self.uv_size], device=images.device)
+        albedo = torch.zeros([batch_size, 3, self.uv_size, self.uv_size], device=images.device)
+
         albedo[...] = 178/255
+
         landmarks3d_world = landmarks3d.clone()
 
         ## projection
