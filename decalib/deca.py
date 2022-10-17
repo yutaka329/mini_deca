@@ -37,6 +37,8 @@ from .utils.tensor_cropper import transform_points
 from .datasets import datasets
 from .utils.config import cfg
 
+from .utils.sample import  grid_sample, grid_sample_for_orimage
+
 #torch.backends.cudnn.benchmark = True
 
 class DECA(nn.Module):
@@ -265,7 +267,10 @@ class DECA(nn.Module):
             ## extract texture
             ## TODO: current resolution 256x256, support higher resolution, and add visibility
             uv_pverts = self.render.world2uv(trans_verts)
-            uv_gt = F.grid_sample(images, uv_pverts.permute(0,2,3,1)[:,:,:,:2], mode='bilinear', align_corners=False)
+            #uv_gt = F.grid_sample(images, uv_pverts.permute(0,2,3,1)[:,:,:,:2], mode='bilinear', align_corners=False)
+
+            uv_gt = grid_sample_for_orimage(codedict['ori_image'], uv_pverts.permute(0,2,3,1)[:,:,:,:2], codedict['tform_inv'])
+
             if self.cfg.model.use_tex:
                 ## TODO: poisson blending should give better-looking results
                 if self.cfg.model.extract_tex:

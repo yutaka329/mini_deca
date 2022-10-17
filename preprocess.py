@@ -114,6 +114,6 @@ class PreProcess:
         dst_image = warp(image, tform.inverse, output_shape=(self.resolution_inp, self.resolution_inp))
         dst_image = dst_image.transpose(2, 0, 1)
 
-        return dst_image #cxhxw
+        return dst_image, tform #cxhxw, _
 
 

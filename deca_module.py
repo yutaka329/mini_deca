@@ -34,12 +34,14 @@ class deca_agent:
         self.codedict = None
 
     def run(self, image, savefolder,  name, saveObj=True):
-        image_numpy = self.preprocess.process(image)  # cxhxw
+        image_numpy, tform_inv = self.preprocess.process(image)  # cxhxw
         image_tensor = torch.tensor(image_numpy).float()
 
         images = image_tensor.to(self.device)[None, ...]
         with torch.no_grad():
             self.codedict = self.deca.encode(images)
+            self.codedict['ori_image'] = image
+            self.codedict['tform_inv'] = tform_inv
             opdict, visdict = self.deca.decode(self.codedict, rendering=True, iddict=None,
                                                vis_lmk=False, return_vis=True,
                                                use_detail=True, render_orig=False)  # tensor
